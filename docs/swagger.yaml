@@ -1,0 +1,335 @@
+basePath: /api/v1
+definitions:
+  github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotConfig:
+    properties:
+      enabled:
+        type: boolean
+      greeting:
+        type: string
+      help_message:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      nickname:
+        type: string
+      status:
+        type: string
+      teamspeak_id:
+        type: string
+    type: object
+  github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotListResponse:
+    properties:
+      bots:
+        items:
+          $ref: '#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotResponse'
+        type: array
+      limit:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: integer
+    type: object
+  github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotResponse:
+    properties:
+      created_at:
+        type: string
+      enabled:
+        type: boolean
+      greeting:
+        type: string
+      help_message:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      nickname:
+        type: string
+      owner_id:
+        type: string
+      status:
+        type: string
+      teamspeak_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.CreateBotRequest:
+    properties:
+      enabled:
+        type: boolean
+      greeting:
+        maxLength: 1024
+        type: string
+      help_message:
+        maxLength: 1024
+        type: string
+      name:
+        maxLength: 120
+        minLength: 2
+        type: string
+      nickname:
+        maxLength: 64
+        minLength: 1
+        type: string
+      teamspeak_id:
+        type: string
+    required:
+    - name
+    - nickname
+    - teamspeak_id
+    type: object
+  github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.UpdateBotRequest:
+    properties:
+      enabled:
+        type: boolean
+      greeting:
+        maxLength: 1024
+        type: string
+      help_message:
+        maxLength: 1024
+        type: string
+      name:
+        maxLength: 120
+        minLength: 2
+        type: string
+      nickname:
+        maxLength: 64
+        minLength: 1
+        type: string
+      teamspeak_id:
+        type: string
+    type: object
+  github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.UpdateStatusRequest:
+    properties:
+      status:
+        type: string
+    required:
+    - status
+    type: object
+info:
+  contact: {}
+  description: WT-Bot bots microservice for managing bot configuration and lifecycle.
+  title: WT-Bot Bots API
+  version: 0.1.0
+paths:
+  /bots:
+    get:
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Search term
+        in: query
+        name: search
+        type: string
+      - description: TeamSpeak ID filter
+        in: query
+        name: teamspeak_id
+        type: string
+      - description: Enabled filter
+        in: query
+        name: enabled
+        type: boolean
+      - description: Sort field
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort order
+        in: query
+        name: sort_order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotListResponse'
+      security:
+      - BearerAuth: []
+      summary: List bots
+      tags:
+      - bots
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Create request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.CreateBotRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a bot
+      tags:
+      - bots
+  /bots/{id}:
+    delete:
+      parameters:
+      - description: Bot ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.MessageResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a bot
+      tags:
+      - bots
+    get:
+      parameters:
+      - description: Bot ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a bot by ID
+      tags:
+      - bots
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bot ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.UpdateBotRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a bot
+      tags:
+      - bots
+  /bots/{id}/config:
+    get:
+      parameters:
+      - description: Bot ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotConfig'
+      summary: Get a bot runtime configuration
+      tags:
+      - bots-service
+  /bots/{id}/status:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bot ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Status request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.UpdateStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.MessageResponse'
+      summary: Update a bot runtime status
+      tags:
+      - bots-service
+  /healthz:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Liveness probe
+      tags:
+      - health
+  /readyz:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Readiness probe
+      tags:
+      - health
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

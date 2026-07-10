@@ -1,0 +1,77 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: wtbot
+      POSTGRES_USER: wtbot
+      POSTGRES_PASSWORD: wtbot
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wtbot -d wtbot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    build:
+      context: ..
+      dockerfile: deployments/Dockerfile
+    environment:
+      DATABASE_URL: postgres://wtbot:wtbot@postgres:5432/wtbot?sslmode=disable
+      JWT_SECRET: change-me-to-a-long-random-secret
+      APP_ENCRYPTION_KEY: change-me-to-a-32-byte-secret-key
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["-migrate", "up"]
+
+  bots:
+    build:
+      context: ..
+      dockerfile: deployments/Dockerfile
+    environment:
+      APP_ENV: development
+      APP_NAME: wt-bot-ms-bots-v1
+      APP_VERSION: 0.1.0
+      APP_BASE_URL: http://localhost:8080
+      APP_PUBLIC_BASE_URL: http://localhost:8080
+      APP_SWAGGER_URL: /swagger/doc.json
+      APP_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173
+      APP_ENCRYPTION_KEY: change-me-to-a-32-byte-secret-key
+      SERVER_ADDR: :8080
+      SERVER_READ_TIMEOUT: 10s
+      SERVER_WRITE_TIMEOUT: 10s
+      SERVER_IDLE_TIMEOUT: 60s
+      SERVER_SHUTDOWN_TIMEOUT: 15s
+      DATABASE_URL: postgres://wtbot:wtbot@postgres:5432/wtbot?sslmode=disable
+      REDIS_ADDR: redis:6379
+      JWT_SECRET: change-me-to-a-long-random-secret
+      JWT_ISSUER: wt-bot-ms-users-v1
+      JWT_ACCESS_TTL: 15m
+      SERVICE_API_KEY: change-me-to-a-long-random-service-key
+    ports:
+      - "8080:8080"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5

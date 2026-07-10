@@ -1,0 +1,12 @@
+.env
+.env.local
+.env.*.local
+*.log
+tmp/
+out/
+vendor/
+.idea/
+.vscode/
+.DS_Store
+*.swp
+*.swo

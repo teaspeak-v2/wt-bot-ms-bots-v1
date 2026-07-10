@@ -1,0 +1,517 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "WT-Bot bots microservice for managing bot configuration and lifecycle.",
+        "title": "WT-Bot Bots API",
+        "contact": {},
+        "version": "0.1.0"
+    },
+    "basePath": "/api/v1",
+    "paths": {
+        "/bots": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bots"
+                ],
+                "summary": "List bots",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search term",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "TeamSpeak ID filter",
+                        "name": "teamspeak_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Enabled filter",
+                        "name": "enabled",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort field",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort order",
+                        "name": "sort_order",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotListResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bots"
+                ],
+                "summary": "Create a bot",
+                "parameters": [
+                    {
+                        "description": "Create request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.CreateBotRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/bots/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bots"
+                ],
+                "summary": "Get a bot by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bots"
+                ],
+                "summary": "Delete a bot",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.MessageResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bots"
+                ],
+                "summary": "Update a bot",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.UpdateBotRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/bots/{id}/config": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bots-service"
+                ],
+                "summary": "Get a bot runtime configuration",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotConfig"
+                        }
+                    }
+                }
+            }
+        },
+        "/bots/{id}/status": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bots-service"
+                ],
+                "summary": "Update a bot runtime status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Status request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.UpdateStatusRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.MessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/healthz": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "Liveness probe",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/readyz": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "Readiness probe",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotConfig": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "greeting": {
+                    "type": "string"
+                },
+                "help_message": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "teamspeak_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotListResponse": {
+            "type": "object",
+            "properties": {
+                "bots": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotResponse"
+                    }
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "greeting": {
+                    "type": "string"
+                },
+                "help_message": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "owner_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "teamspeak_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.CreateBotRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "nickname",
+                "teamspeak_id"
+            ],
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "greeting": {
+                    "type": "string",
+                    "maxLength": 1024
+                },
+                "help_message": {
+                    "type": "string",
+                    "maxLength": 1024
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 120,
+                    "minLength": 2
+                },
+                "nickname": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "minLength": 1
+                },
+                "teamspeak_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.UpdateBotRequest": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "greeting": {
+                    "type": "string",
+                    "maxLength": 1024
+                },
+                "help_message": {
+                    "type": "string",
+                    "maxLength": 1024
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 120,
+                    "minLength": 2
+                },
+                "nickname": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "minLength": 1
+                },
+                "teamspeak_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.UpdateStatusRequest": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
