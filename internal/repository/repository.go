@@ -184,10 +184,7 @@ func (r *Repository) Update(ctx context.Context, id uuid.UUID, req models.Update
 	greeting := coalesceStr(req.Greeting, bot.Greeting)
 	helpMessage := coalesceStr(req.HelpMessage, bot.HelpMessage)
 	enabled := coalesceBool(req.Enabled, bot.Enabled)
-	apiKey, err := secure.Encrypt(bot.APIKey, r.encKey)
-	if err != nil {
-		return nil, err
-	}
+	apiKey := bot.APIKey
 
 	const q = `update bots set name=$2, teamspeak_id=$3, nickname=$4, greeting=$5, help_message=$6, enabled=$7, api_key=$8, updated_at=now()
 		where id=$1
