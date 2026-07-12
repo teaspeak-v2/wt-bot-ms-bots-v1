@@ -60,6 +60,9 @@ services:
       JWT_ISSUER: wt-bot-ms-users-v1
       JWT_ACCESS_TTL: 15m
       SERVICE_API_KEY: change-me-to-a-long-random-service-key
+      RUNNER_URL: http://runner:8080
+      RUNNER_SERVICE_KEY: change-me-to-a-long-random-service-key
+      RUNNER_TIMEOUT: 10s
     ports:
       - "8080:8080"
     depends_on:

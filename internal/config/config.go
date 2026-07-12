@@ -17,6 +17,7 @@ type Config struct {
 	Database      DatabaseConfig `envPrefix:"DATABASE_"`
 	Redis         RedisConfig    `envPrefix:"REDIS_"`
 	JWT           JWTConfig      `envPrefix:"JWT_"`
+	Runner        RunnerConfig   `envPrefix:"RUNNER_"`
 	ServiceAPIKey string         `env:"SERVICE_API_KEY" envDefault:""`
 }
 
@@ -61,6 +62,12 @@ type JWTConfig struct {
 	Secret    string        `env:"SECRET" validate:"required,min=32"`
 	Issuer    string        `env:"ISSUER" envDefault:"wt-bot-ms-users-v1" validate:"required"`
 	AccessTTL time.Duration `env:"ACCESS_TTL" envDefault:"15m" validate:"required"`
+}
+
+type RunnerConfig struct {
+	URL        string        `env:"URL" validate:"omitempty,url"`
+	ServiceKey string        `env:"SERVICE_KEY" envDefault:""`
+	Timeout    time.Duration `env:"TIMEOUT" envDefault:"10s" validate:"required"`
 }
 
 func Load() (Config, error) {

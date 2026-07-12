@@ -12,6 +12,7 @@ import (
 	"github.com/teaspeak-v2/wt-bot-ms-bots-v1/internal/handlers"
 	"github.com/teaspeak-v2/wt-bot-ms-bots-v1/internal/httpserver"
 	"github.com/teaspeak-v2/wt-bot-ms-bots-v1/internal/repository"
+	"github.com/teaspeak-v2/wt-bot-ms-bots-v1/internal/runner"
 	"github.com/teaspeak-v2/wt-bot-ms-bots-v1/internal/service"
 	"github.com/teaspeak-v2/wt-bot-ms-bots-v1/internal/token"
 )
@@ -52,7 +53,16 @@ func New(cfg config.Config, logger *slog.Logger) (*App, error) {
 	repo := repository.New(pool, cfg.App.EncryptionKey)
 	tokens := token.New(cfg.JWT.Secret, cfg.JWT.Issuer, cfg.JWT.AccessTTL)
 
-	botSvc := service.NewBotService(repo, redisClient, cfg.App.EncryptionKey)
+	var runnerClient *runner.Client
+	if cfg.Runner.URL != "" {
+		runnerKey := cfg.Runner.ServiceKey
+		if runnerKey == "" {
+			runnerKey = cfg.ServiceAPIKey
+		}
+		runnerClient = runner.New(cfg.Runner.URL, runnerKey, cfg.Runner.Timeout)
+	}
+
+	botSvc := service.NewBotService(repo, redisClient, cfg.App.EncryptionKey, runnerClient)
 
 	dbPing := func() error { return pool.Ping(context.Background()) }
 	redisPing := func() error {
