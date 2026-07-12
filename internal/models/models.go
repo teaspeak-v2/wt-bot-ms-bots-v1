@@ -102,6 +102,12 @@ type UpdateStatusRequest struct {
 	Status string `json:"status" validate:"required"`
 }
 
+// BotContainerStatus is the runtime status of a bot container.
+type BotContainerStatus struct {
+	ContainerID string `json:"container_id"`
+	Status      string `json:"status"`
+}
+
 // MessageResponse is a generic message response.
 type MessageResponse struct {
 	Message string `json:"message"`

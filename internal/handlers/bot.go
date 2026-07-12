@@ -188,6 +188,49 @@ func (h *BotHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, models.MessageResponse{Message: "bot deleted"})
 }
 
+// Start godoc
+// @Summary Start a bot container
+// @Tags bots
+// @Security BearerAuth
+// @Produce json
+// @Param id path string true "Bot ID"
+// @Success 200 {object} models.BotContainerStatus
+// @Router /bots/{id}/start [post]
+func (h *BotHandler) Start(w http.ResponseWriter, r *http.Request) {
+	id, err := h.parseID(r)
+	if err != nil {
+		apperror.WriteJSON(w, err)
+		return
+	}
+	resp, err := h.svc.Start(r.Context(), id)
+	if err != nil {
+		apperror.WriteJSON(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, resp)
+}
+
+// Stop godoc
+// @Summary Stop a bot container
+// @Tags bots
+// @Security BearerAuth
+// @Produce json
+// @Param id path string true "Bot ID"
+// @Success 200 {object} models.MessageResponse
+// @Router /bots/{id}/stop [post]
+func (h *BotHandler) Stop(w http.ResponseWriter, r *http.Request) {
+	id, err := h.parseID(r)
+	if err != nil {
+		apperror.WriteJSON(w, err)
+		return
+	}
+	if err := h.svc.Stop(r.Context(), id); err != nil {
+		apperror.WriteJSON(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, models.MessageResponse{Message: "bot stopped"})
+}
+
 // Config godoc
 // @Summary Get a bot runtime configuration
 // @Tags bots-service

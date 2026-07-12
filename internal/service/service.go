@@ -10,6 +10,7 @@ import (
 	"github.com/teaspeak-v2/wt-bot-ms-bots-v1/internal/httpserver/middleware"
 	"github.com/teaspeak-v2/wt-bot-ms-bots-v1/internal/models"
 	"github.com/teaspeak-v2/wt-bot-ms-bots-v1/internal/repository"
+	"github.com/teaspeak-v2/wt-bot-ms-bots-v1/internal/runner"
 )
 
 // BotService handles business logic for bots.
@@ -17,11 +18,12 @@ type BotService struct {
 	repo   repository.BotRepository
 	cache  *cache.Client
 	encKey string
+	runner *runner.Client
 }
 
 // NewBotService creates a new service.
-func NewBotService(repo repository.BotRepository, cache *cache.Client, encKey string) *BotService {
-	return &BotService{repo: repo, cache: cache, encKey: encKey}
+func NewBotService(repo repository.BotRepository, cache *cache.Client, encKey string, runnerClient *runner.Client) *BotService {
+	return &BotService{repo: repo, cache: cache, encKey: encKey, runner: runnerClient}
 }
 
 func (s *BotService) toResponse(bot *models.Bot) *models.BotResponse {
@@ -206,6 +208,60 @@ func (s *BotService) UpdateStatus(ctx context.Context, id uuid.UUID, status stri
 	return nil
 }
 
+// Start asks the runner to spawn a container for the bot.
+func (s *BotService) Start(ctx context.Context, id uuid.UUID) (*models.BotContainerStatus, error) {
+	bot, err := s.repo.GetByID(ctx, id)
+	if err != nil {
+		return nil, mapRepoErr(err)
+	}
+	if err := s.checkOwnership(ctx, bot); err != nil {
+		return nil, err
+	}
+	if s.runner == nil {
+		return nil, apperror.Internal("runner not configured", nil)
+	}
+
+	resp, err := s.runner.Spawn(ctx, id)
+	if err != nil {
+		return nil, apperror.Internal("failed to spawn bot", err)
+	}
+
+	if err := s.repo.UpdateStatus(ctx, id, "starting"); err != nil {
+		return nil, mapRepoErr(err)
+	}
+	if s.cache != nil {
+		_ = s.cache.DeleteBot(ctx, id)
+	}
+
+	return &models.BotContainerStatus{ContainerID: resp.ContainerID, Status: resp.Status}, nil
+}
+
+// Stop asks the runner to stop and remove the bot container.
+func (s *BotService) Stop(ctx context.Context, id uuid.UUID) error {
+	bot, err := s.repo.GetByID(ctx, id)
+	if err != nil {
+		return mapRepoErr(err)
+	}
+	if err := s.checkOwnership(ctx, bot); err != nil {
+		return err
+	}
+	if s.runner == nil {
+		return apperror.Internal("runner not configured", nil)
+	}
+
+	if err := s.runner.Stop(ctx, id); err != nil {
+		return apperror.Internal("failed to stop bot", err)
+	}
+
+	if err := s.repo.UpdateStatus(ctx, id, "offline"); err != nil {
+		return mapRepoErr(err)
+	}
+	if s.cache != nil {
+		_ = s.cache.DeleteBot(ctx, id)
+	}
+	return nil
+}
+
 func defaultGreeting(v string) string {
 	if v == "" {
 		return "Welcome to the server!"
@@ -215,7 +271,7 @@ func defaultGreeting(v string) string {
 
 func defaultHelpMessage(v string) string {
 	if v == "" {
-		return "Available commands: !help"
+		return "Available commands: !help, !ping"
 	}
 	return v
 }

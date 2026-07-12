@@ -38,6 +38,8 @@ func NewRouter(deps RouterDeps) http.Handler {
 			auth.Get("/bots/{id}", deps.Bots.GetByID)
 			auth.Patch("/bots/{id}", deps.Bots.Update)
 			auth.Delete("/bots/{id}", deps.Bots.Delete)
+			auth.Post("/bots/{id}/start", deps.Bots.Start)
+			auth.Post("/bots/{id}/stop", deps.Bots.Stop)
 		})
 
 		api.Group(func(svc chi.Router) {
