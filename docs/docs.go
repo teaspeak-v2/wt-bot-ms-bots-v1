@@ -254,6 +254,39 @@ const docTemplate = `{
                 }
             }
         },
+        "/bots/{id}/start": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bots"
+                ],
+                "summary": "Start a bot container",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotContainerStatus"
+                        }
+                    }
+                }
+            }
+        },
         "/bots/{id}/status": {
             "post": {
                 "consumes": [
@@ -282,6 +315,39 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.UpdateStatusRequest"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.MessageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/bots/{id}/stop": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "bots"
+                ],
+                "summary": "Stop a bot container",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bot ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -365,6 +431,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "teamspeak_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotContainerStatus": {
+            "type": "object",
+            "properties": {
+                "container_id": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }

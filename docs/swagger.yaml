@@ -19,6 +19,13 @@ definitions:
       teamspeak_id:
         type: string
     type: object
+  github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotContainerStatus:
+    properties:
+      container_id:
+        type: string
+      status:
+        type: string
+    type: object
   github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotListResponse:
     properties:
       bots:
@@ -270,6 +277,26 @@ paths:
       summary: Get a bot runtime configuration
       tags:
       - bots-service
+  /bots/{id}/start:
+    post:
+      parameters:
+      - description: Bot ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.BotContainerStatus'
+      security:
+      - BearerAuth: []
+      summary: Start a bot container
+      tags:
+      - bots
   /bots/{id}/status:
     post:
       consumes:
@@ -296,6 +323,26 @@ paths:
       summary: Update a bot runtime status
       tags:
       - bots-service
+  /bots/{id}/stop:
+    post:
+      parameters:
+      - description: Bot ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_teaspeak-v2_wt-bot-ms-bots-v1_internal_models.MessageResponse'
+      security:
+      - BearerAuth: []
+      summary: Stop a bot container
+      tags:
+      - bots
   /healthz:
     get:
       produces:
