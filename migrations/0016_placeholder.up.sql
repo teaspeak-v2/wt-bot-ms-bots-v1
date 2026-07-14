@@ -1,0 +1,1 @@
+-- placeholder: schema owned by ms-tibia-v1 (characters + character_deaths)
