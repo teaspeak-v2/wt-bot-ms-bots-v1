@@ -1,0 +1,1 @@
+-- placeholder: schema owned by other microservices
