@@ -1,0 +1,1 @@
+-- placeholder: schema owned by ms-notifications-v1 (newsletter_subscribers)
